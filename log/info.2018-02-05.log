@@ -1,0 +1,3 @@
+2018-02-05 17:44:18,582 [main] INFO  SocketServer - ===start socket:7779
+2018-02-05 17:48:08,826 [http-8080-1] INFO  TestController - aad6f4a
+2018-02-05 17:48:09,287 [http-8080-1] INFO  DruidDataSource - {dataSource-1} inited
