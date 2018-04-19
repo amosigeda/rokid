@@ -10,6 +10,9 @@ public class BindDevice {
 	private String name;
 	private Timestamp createtime;
 	private Integer status;
+	private Integer type;
+	private String mac;
+	private Integer bluetooth_status;
 	
 	
 	public Integer getId() {
@@ -48,5 +51,25 @@ public class BindDevice {
 	public void setStatus(Integer status) {
 		this.status = status;
 	}
+	public Integer getType() {
+		return type;
+	}
+	public void setType(Integer type) {
+		this.type = type;
+	}
+	public String getMac() {
+		return mac;
+	}
+	public void setMac(String mac) {
+		this.mac = mac;
+	}
+	public Integer getBluetooth_status() {
+		return bluetooth_status;
+	}
+	public void setBluetooth_status(Integer bluetooth_status) {
+		this.bluetooth_status = bluetooth_status;
+	}
+	
+	
 	
 }

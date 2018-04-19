@@ -4,7 +4,9 @@ import com.alibaba.fastjson.JSON;
 import com.bracelet.dto.HttpBaseDto;
 import com.bracelet.dto.SocketLoginDto;
 import com.bracelet.entity.BindDevice;
+import com.bracelet.entity.LocationRequest;
 import com.bracelet.entity.UserInfo;
+import com.bracelet.entity.VersionInfo;
 import com.bracelet.exception.BizException;
 import com.bracelet.service.IAuthcodeService;
 import com.bracelet.service.IOpenDoorService;
@@ -171,9 +173,11 @@ public class UserController extends BaseController {
 				dataMap.put("username", userInfo.getUsername());
 				dataMap.put("admin", 0);
 				dataMap.put("token", token);
+				dataMap.put("band", 0);
 				List<BindDevice> list = userInfoService
 						.getBindInfoById(userInfo.getUser_id());
 				if (list != null && !list.isEmpty()) {
+					dataMap.put("band", 1);
 					for (BindDevice wlInfo : list) {
 						Integer status = wlInfo.getStatus();
 						if (status == 1) {
@@ -181,6 +185,13 @@ public class UserController extends BaseController {
 							break;
 						}
 					}
+				}
+				List<BindDevice> listt = userInfoService
+						.getBindInfoById(userInfo.getUser_id(),1);
+				if(listt.size()>0){
+					dataMap.put("imei", listt.get(0).getImei()+"");
+				}else{
+					dataMap.put("imei", "0");
 				}
 
 				dto.setData(dataMap);
@@ -212,10 +223,11 @@ public class UserController extends BaseController {
 				dataMap.put("username", userInfo.getUsername());
 				dataMap.put("token", token);
 				dataMap.put("admin", 0);
-
+				dataMap.put("band", 0);
 				List<BindDevice> list = userInfoService
 						.getBindInfoById(userInfo.getUser_id());
 				if (list != null && !list.isEmpty()) {
+					dataMap.put("band", 1);
 					for (BindDevice wlInfo : list) {
 						Integer status = wlInfo.getStatus();
 						if (status == 1) {
@@ -223,6 +235,12 @@ public class UserController extends BaseController {
 							break;
 						}
 					}
+				}
+				BindDevice bindDevice =userInfoService.getChooseDevice(userInfo.getUser_id(),1);
+				if(bindDevice!=null){
+					dataMap.put("imei", bindDevice.getImei());
+				}else{
+					dataMap.put("imei", "0");
 				}
 				dto.setData(dataMap);
 				return dto;
@@ -305,15 +323,24 @@ public class UserController extends BaseController {
 				dataMap.put("id", wlInfo.getId());
 				dataMap.put("name", wlInfo.getName());
 				dataMap.put("imei", wlInfo.getImei());
-				Integer count = openService.getOpenCount(wlInfo.getImei());
-				dataMap.put("count", count);
+				dataMap.put("mac", wlInfo.getMac());
+				dataMap.put("select", wlInfo.getType());
+				//Integer count = openService.getOpenCount(wlInfo.getImei());
+				dataMap.put("count", 0);
 				dataMap.put("createtime", wlInfo.getCreatetime().getTime());
 				dataMap.put("status", wlInfo.getStatus());
-				BindDevice bindevice =userInfoService.getBindInfoByImeiAndStatus(wlInfo.getImei(),1);
+				/*BindDevice bindevice =userInfoService.getBindInfoByImeiAndStatus(wlInfo.getImei(),1);
 				if(bindevice != null){
 					dataMap.put("user_id", bindevice.getUser_id());	
+				}*/
+				dataMap.put("online", 0);
+				dataMap.put("bluetooth_status", wlInfo.getBluetooth_status());
+				SocketLoginDto socketLoginDto = ChannelMap.getChannel(wlInfo.getImei());
+				if (socketLoginDto == null || socketLoginDto.getChannel() == null) {
+					if (socketLoginDto.getChannel().isActive()) {
+						dataMap.put("online", 1);
+					}
 				}
-				datalist.add(dataMap);
 			}
 		}
 		HttpBaseDto dto = new HttpBaseDto();
@@ -474,6 +501,68 @@ public class UserController extends BaseController {
 			logger.info("更新用户数据，发生数据库失败");
 			throw new BizException(RespCode.SYS_ERR);
 		}
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "/device/control", method = RequestMethod.POST)
+	public HttpBaseDto deviceControl(@RequestParam String token,
+			@RequestParam String imei, @RequestParam Integer select) {
+		if (StringUtils.isEmpty(imei)) {
+			throw new BizException(RespCode.NOTEXIST_PARAM);
+		}
+		Long user_id = checkTokenAndUser(token);
+		if (this.userInfoService.udpatDeviceSelect(user_id,imei, select)) {
+			HttpBaseDto dto = new HttpBaseDto();
+			return dto;
+		} else {
+			logger.info("用户修改默认选择, token:" + token + ",userId:" + user_id
+					+ ",imei:" + imei);
+			throw new BizException(RespCode.U_BINGDING_ERR);
+		}
+	}
+	
+	
+	@ResponseBody
+	@RequestMapping(value = "/device/bluetooth", method = RequestMethod.POST)
+	public HttpBaseDto bluetooth(@RequestParam String token,
+			@RequestParam String imei, @RequestParam Integer open) {
+		if (StringUtils.isEmpty(imei)) {
+			throw new BizException(RespCode.NOTEXIST_PARAM);
+		}
+		Long user_id = checkTokenAndUser(token);
+		if (this.userInfoService.udpatbluetoothStatus(user_id,imei, open)) {
+			HttpBaseDto dto = new HttpBaseDto();
+			return dto;
+		} else {
+			logger.info("用户修改蓝牙状态, token:" + token + ",userId:" + user_id
+					+ ",imei:" + imei);
+			throw new BizException(RespCode.U_BINGDING_ERR);
+		}
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "/version/{token}", method = RequestMethod.GET)
+	public HttpBaseDto version(@PathVariable String token) {
+		Long user_id = checkTokenAndUser(token);
+		UserInfo userInfo = userInfoService.getUserInfoById(user_id);
+		if (userInfo == null) {
+			logger.info("askDevice error.no login.token:" + token);
+			throw new BizException(RespCode.U_NOT_EXIST);
+		}
+		VersionInfo vinfo = userInfoService.getVersionInfo();
+		
+		Map<String, Object> map = new HashMap<String, Object>();
+		if(vinfo !=null ){
+			map.put("app_download",vinfo.getDownload_path()+"");
+			map.put("app_version",vinfo.getVersion()+"");
+		}else{
+			map.put("app_download","");
+			map.put("app_version","");
+		}
+
+		HttpBaseDto dto = new HttpBaseDto();
+		dto.setData(map);
+		return dto;
 	}
 
 }

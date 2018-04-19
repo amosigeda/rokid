@@ -15,6 +15,7 @@ import com.bracelet.dto.FingerDto;
 import com.bracelet.dto.SocketBaseDto;
 import com.bracelet.dto.SocketLoginDto;
 import com.bracelet.entity.BindDevice;
+import com.bracelet.entity.HongWai;
 import com.bracelet.service.IHeartRateService;
 import com.bracelet.service.IPushlogService;
 import com.bracelet.service.IStepService;
@@ -45,8 +46,13 @@ public class GetInfraredDeviceId extends AbstractBizService {
 			JSONObject jsonObject, Channel channel) {
 		logger.info("===获取红外id：" + jsonObject.toJSONString());
 		String imei = socketLoginDto.getImei();
-		Long hongWaiId = jsonObject.getLong("id");
-		 userInfoService.insertInfraredDeviceId(imei,hongWaiId);
+		String hongWaiId = jsonObject.getString("id");
+		HongWai hong = userInfoService.getHongWaiInfo(imei);
+		if(hong != null){
+			userInfoService.updateHongWaiId(imei,hongWaiId);
+		}else{
+			userInfoService.insertInfraredDeviceId(imei,hongWaiId);
+		}
 
 /*		FingerDto sosDto = new FingerDto();
 		sosDto.setStatus(status);
@@ -67,6 +73,9 @@ public class GetInfraredDeviceId extends AbstractBizService {
 		dto.setTimestamp(new Date().getTime());
 		dto.setStatus(0);
 		return dto;
+	}
+	public static void main(String[] args) {
+		System.out.println(1);
 	}
 
 }

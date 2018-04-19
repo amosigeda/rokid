@@ -3,17 +3,29 @@ package com.bracelet.entity;
 import java.sql.Timestamp;
 
 public class HongWai {
-	private Long id;
+	private Integer idd;
+	private String id;
 	private String imei;
-	private Long hongwai_id;;
+	private String hongwai_id;;
 	private Timestamp createtime;
+	private Timestamp updatetime;
 	private String name;
 	private Integer num;
-	public Long getId() {
+	
+
+	public Integer getIdd() {
+		return idd;
+	}
+
+	public void setIdd(Integer idd) {
+		this.idd = idd;
+	}
+
+	public String getId() {
 		return id;
 	}
 
-	public void setId(Long id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 
@@ -25,11 +37,12 @@ public class HongWai {
 		this.imei = imei;
 	}
 
-	public Long getHongwai_id() {
+
+	public String getHongwai_id() {
 		return hongwai_id;
 	}
 
-	public void setHongwai_id(Long hongwai_id) {
+	public void setHongwai_id(String hongwai_id) {
 		this.hongwai_id = hongwai_id;
 	}
 
@@ -56,5 +69,12 @@ public class HongWai {
 	public void setNum(Integer num) {
 		this.num = num;
 	}
-     
+
+	public Timestamp getUpdatetime() {
+		return updatetime;
+	}
+
+	public void setUpdatetime(Timestamp updatetime) {
+		this.updatetime = updatetime;
+	}
 }

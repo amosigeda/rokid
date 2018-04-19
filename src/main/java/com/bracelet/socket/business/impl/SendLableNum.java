@@ -48,9 +48,9 @@ public class SendLableNum extends AbstractBizService {
 	
 		  
 		 userInfoService.updateHongWaiNumInfo(imei, num);
-		 BindDevice bind=userInfoService.getBindInfoByImeiAndStatus(imei, 1);
+		// BindDevice bind=userInfoService.getBindInfoByImeiAndStatus(imei, 1);
 		 
-		FingerDto sosDto = new FingerDto();
+	/*	FingerDto sosDto = new FingerDto();
 		sosDto.setImei(imei);
 		sosDto.setTimestamp(new Date().getTime());
 		sosDto.setNum(num);
@@ -60,7 +60,7 @@ public class SendLableNum extends AbstractBizService {
 		String notifyContent=title+"为"+num;
 		PushUtil.push(target, title, content, notifyContent);
 		// save push log
-		this.pushlogService.insert(bind.getUser_id(), imei, 0, target, title, content);
+		this.pushlogService.insert(bind.getUser_id(), imei, 0, target, title, content);*/
 		
 		SocketBaseDto dto = new SocketBaseDto();
 		dto.setType(jsonObject.getIntValue("type"));

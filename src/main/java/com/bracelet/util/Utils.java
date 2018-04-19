@@ -2,11 +2,16 @@ package com.bracelet.util;
 
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Point2D;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -18,12 +23,17 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.zip.GZIPInputStream;
+import java.net.URL;
 
-import org.apache.commons.codec.binary.Base64;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManager;
 
 public class Utils {
 
-	public final static String accessKeyId = "LTAI8CmVtQhm7KSG";  
+	public final static String accessKeyId = "LTAI8CmVtQhm7KSG";
 	public final static String accessKeySecret = "c9wj4Lw22QmDLuQkx2l46xmfCD4H1e";
 	public final static String accessKeyIdOfBeidou = "LTAI7YNEkaz5J7Vy";
 	public final static String accessKeySecretOfBeidou = "EIHW3lpcPMXnxsdW7CW9jnriovXTch";
@@ -87,6 +97,32 @@ public class Utils {
 			e.printStackTrace();
 		}
 		return md5str;
+	}
+
+	public static String getmd5(String message) {
+		byte[] source = message.getBytes();
+		String s = null;
+		// 用来将字节转换成16进制表示的字符
+		char[] hexDigits = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+				'a', 'b', 'c', 'd', 'e', 'f' };
+		try {
+			MessageDigest md = MessageDigest.getInstance("MD5");
+			md.update(source);
+			// MD5的计算结果是一个128位的长整数，用字节表示为16个字节
+			byte[] tmp = md.digest();
+			// 每个字节用16进制表示的话，使用2个字符(高4位一个,低4位一个)，所以表示成16进制需要32个字符
+			char[] str = new char[16 * 2];
+			int k = 0;// 转换结果中对应的字符位置
+			for (int i = 0; i < 16; i++) {// 对MD5的每一个字节转换成16进制字符
+				byte byte0 = tmp[i];
+				str[k++] = hexDigits[byte0 >>> 4 & 0xf];// 对字节高4位进行16进制转换
+				str[k++] = hexDigits[byte0 & 0xf]; // 对字节低4位进行16进制转换
+			}
+			s = new String(str);
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+		}
+		return s;
 	}
 
 	/**
@@ -415,6 +451,65 @@ public class Utils {
 	public static String getDownloadPath(String url, String port, String path) {
 		String tmp = url + port + path;
 		return tmp;
+	}
+
+	/*
+	 * 处理https GET/POST请求 请求地址、请求方法、参数
+	 */
+	public static String httpsRequest(String requestUrl, String requestMethod,
+			String outputStr, String client) {
+		String acceptjson = "";
+		try {
+			// 创建SSLContext
+			SSLContext sslContext = SSLContext.getInstance("SSL");
+			TrustManager[] tm = { new MyX509TrustManager() };
+			// 初始化
+			sslContext.init(null, tm, new java.security.SecureRandom());
+			;
+			// 获取SSLSocketFactory对象
+			SSLSocketFactory ssf = sslContext.getSocketFactory();
+			URL url = new URL(requestUrl);
+
+			HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
+			conn.setRequestProperty("Content-Type",
+					"application/x-www-form-urlencoded");
+			conn.setRequestProperty("client", client);
+			conn.setRequestProperty("Accept-Language", "zh");
+
+			conn.setDoOutput(true);
+			conn.setDoInput(true);
+			conn.setUseCaches(false);
+			conn.setRequestMethod(requestMethod);
+			// 设置当前实例使用的SSLSoctetFactory
+			conn.setSSLSocketFactory(ssf);
+			conn.connect();
+			// 往服务器端写内容
+			if (null != outputStr) {
+				OutputStream os = conn.getOutputStream();
+				os.write(outputStr.getBytes("utf-8"));
+				os.close();
+			}
+
+			// 读取服务器端返回的内容
+			InputStream is = conn.getInputStream();
+
+			GZIPInputStream gzis = new GZIPInputStream(is);
+			InputStreamReader reader = new InputStreamReader(gzis);
+			BufferedReader br = new BufferedReader(reader);
+
+			StringBuffer sb = new StringBuffer("");
+			String temp;
+			while ((temp = br.readLine()) != null) {
+				sb.append(temp);
+			}
+
+			br.close();
+			acceptjson = sb.toString();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return acceptjson;
 	}
 
 }

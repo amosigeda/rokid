@@ -46,7 +46,7 @@ public class SendAllkey extends AbstractBizService {
 		  String  imei = socketLoginDto.getImei();
 		  String data = jsonObject.getString("data");
 	
-		  
+		  userInfoService.insertAllKey(imei,data);  
 		 BindDevice bind=userInfoService.getBindInfoByImeiAndStatus(imei, 1);
 		 
 		FingerDto sosDto = new FingerDto();

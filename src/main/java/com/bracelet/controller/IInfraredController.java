@@ -3,6 +3,7 @@ package com.bracelet.controller;
 import com.alibaba.fastjson.JSON;
 import com.bracelet.dto.HttpBaseDto;
 import com.bracelet.dto.SocketLoginDto;
+import com.bracelet.entity.AllKeyInfo;
 import com.bracelet.entity.HongWai;
 import com.bracelet.entity.Location;
 import com.bracelet.entity.LocationRequest;
@@ -59,9 +60,9 @@ public class IInfraredController extends BaseController {
 		Map<String, Object> map = new HashMap<>();
 		HongWai hongWaiInfo = userInfoService.getHongWaiInfo(imei);
 		if (hongWaiInfo != null) {
-			map.put("id", hongWaiInfo.getHongwai_id());
+			map.put("id", hongWaiInfo.getHongwai_id()+"");
 		} else {
-			map.put("id", 0);
+			map.put("id", "0");
 
 			LocationRequest re = new LocationRequest();
 			re.setA(0);
@@ -90,7 +91,7 @@ public class IInfraredController extends BaseController {
 	@ResponseBody
 	@RequestMapping(value = "/startMatch", method = RequestMethod.POST)
 	public HttpBaseDto startMatch(@RequestParam String token,
-			@RequestParam String imei, @RequestParam Long id) {
+			@RequestParam String imei, @RequestParam String id) {
 		Long user_id = checkTokenAndUser(token);
 		SocketLoginDto socketLoginDto = ChannelMap.getChannel(imei);
 		if (socketLoginDto == null || socketLoginDto.getChannel() == null) {
@@ -122,7 +123,7 @@ public class IInfraredController extends BaseController {
 	@ResponseBody
 	@RequestMapping(value = "/nextMatch", method = RequestMethod.POST)
 	public HttpBaseDto nextMatch(@RequestParam String token,
-			@RequestParam String imei, @RequestParam Long id) {
+			@RequestParam String imei, @RequestParam String id) {
 		Long user_id = checkTokenAndUser(token);
 		SocketLoginDto socketLoginDto = ChannelMap.getChannel(imei);
 		if (socketLoginDto == null || socketLoginDto.getChannel() == null) {
@@ -155,7 +156,7 @@ public class IInfraredController extends BaseController {
 	@ResponseBody
 	@RequestMapping(value = "/setname", method = RequestMethod.POST)
 	public HttpBaseDto setName(@RequestParam String token,
-			@RequestParam String imei, @RequestParam Long id, @RequestParam String  name) {
+			@RequestParam String imei, @RequestParam String id, @RequestParam String  name) {
 		Long user_id = checkTokenAndUser(token);
 		SocketLoginDto socketLoginDto = ChannelMap.getChannel(imei);
 		if (socketLoginDto == null || socketLoginDto.getChannel() == null) {
@@ -192,7 +193,7 @@ public class IInfraredController extends BaseController {
 	@ResponseBody
 	@RequestMapping(value = "/control", method = RequestMethod.POST)
 	public HttpBaseDto control(@RequestParam String token,
-			@RequestParam String imei, @RequestParam Long id, @RequestParam String  name, @RequestParam String  key) {
+			@RequestParam String imei, @RequestParam String id, @RequestParam String  name, @RequestParam String  key) {
 		Long user_id = checkTokenAndUser(token);
 		SocketLoginDto socketLoginDto = ChannelMap.getChannel(imei);
 		if (socketLoginDto == null || socketLoginDto.getChannel() == null) {
@@ -225,6 +226,42 @@ public class IInfraredController extends BaseController {
 		return dto;
 	}
 	
-	
+	// 获取匹配总数
+		@ResponseBody
+		@RequestMapping(value = "/getMatchNumber/{token}/{imei}", method = RequestMethod.GET)
+		public HttpBaseDto getMatchNumber(@PathVariable String token,
+				@PathVariable String imei) {
+			Long user_id = checkTokenAndUser(token);
+			Map<String, Object> map = new HashMap<>();
+			HongWai hong = userInfoService.getHongWaiInfo(imei);
+			if(hong != null){
+				map.put("num", hong.getNum());
+			}else{
+				map.put("num", 0);
+			}
+
+			HttpBaseDto dto = new HttpBaseDto();
+			dto.setData(map);
+			return dto;
+		}
+		
+		
+		// 获取匹配总数
+		@ResponseBody
+		@RequestMapping(value = "/getallkey/{token}/{imei}", method = RequestMethod.GET)
+		public HttpBaseDto getAllKey(@PathVariable String token,@PathVariable String imei) {
+			Long user_id = checkTokenAndUser(token);
+			Map<String, Object> map = new HashMap<>();
+			AllKeyInfo hong = userInfoService.getAllKeyInfo(imei);
+			if(hong != null){
+				map.put("allkey", hong.getAll_key()+"");
+			}else{
+				map.put("allkey", "");
+			}
+
+			HttpBaseDto dto = new HttpBaseDto();
+			dto.setData(map);
+			return dto;
+		}
 
 }

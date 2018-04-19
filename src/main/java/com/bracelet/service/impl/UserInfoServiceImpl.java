@@ -1,16 +1,13 @@
 package com.bracelet.service.impl;
 
-import com.bracelet.dto.SocketLoginDto;
+import com.bracelet.entity.AllKeyInfo;
 import com.bracelet.entity.BindDevice;
 import com.bracelet.entity.HongWai;
 import com.bracelet.entity.NotRegisterInfo;
 import com.bracelet.entity.UserInfo;
-import com.bracelet.entity.WhiteListInfo;
+import com.bracelet.entity.VersionInfo;
 import com.bracelet.service.IUserInfoService;
-import com.bracelet.util.ChannelMap;
 import com.bracelet.util.Utils;
-
-import io.netty.channel.Channel;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -190,7 +187,12 @@ public class UserInfoServiceImpl implements IUserInfoService {
 		String sql = "select * from bind_device where imei=?";
 		List<BindDevice> list = jdbcTemplate.query(sql, new Object[] { imei },
 				new BeanPropertyRowMapper<BindDevice>(BindDevice.class));
-		return list;
+		if (list != null && !list.isEmpty()) {
+			return list;
+		} else {
+			logger.info("cannot find userinfo:");
+		}
+		return null;
 	}
 
 	@Override
@@ -319,30 +321,126 @@ public class UserInfoServiceImpl implements IUserInfoService {
 	}
 
 	@Override
-	public boolean insertInfraredDeviceId(String imei, Long hongWaiId) {
+	public boolean insertInfraredDeviceId(String imei, String hongWaiId) {
 		Timestamp now = Utils.getCurrentTimestamp();
 		int i = jdbcTemplate
 				.update("insert into hongwai (imei, hongwai_id, createtime) values (?,?,?)",
 						new Object[] { imei, hongWaiId, now }, new int[] {
-								Types.VARCHAR, Types.INTEGER, Types.TIMESTAMP });
+								Types.VARCHAR, Types.VARCHAR, Types.TIMESTAMP });
 		return i == 1;
 	}
 
 	@Override
-	public boolean updateHongWaiInfo(String imei, Long id, String name) {
+	public boolean updateHongWaiInfo(String imei, String id, String name) {
 		int i = jdbcTemplate.update(
 				"update hongwai set name=? where imei = ? and hongwai_id = ?",
 				new Object[] { name, imei ,id}, new int[] { Types.VARCHAR,
-						Types.VARCHAR, Types.INTEGER });
+						Types.VARCHAR, Types.VARCHAR });
 		return i == 1;
 	}
 
 	@Override
 	public boolean updateHongWaiNumInfo(String imei, Integer num) {
+		Timestamp now = Utils.getCurrentTimestamp();
 		int i = jdbcTemplate.update(
-				"update hongwai set num =? where imei = ?",
-				new Object[] { num, imei }, new int[] { Types.INTEGER,
+				"update hongwai set num =?,updatetime=? where imei = ?",
+				new Object[] { num, now,imei }, new int[] { Types.INTEGER,Types.TIMESTAMP,
 						Types.VARCHAR });
 		return i == 1;
+	}
+
+	@Override
+	public boolean updateHongWaiId(String imei, String hongWaiId) {
+		Timestamp now = Utils.getCurrentTimestamp();
+		int i = jdbcTemplate.update(
+				"update hongwai set hongwai_id =?,updatetime=? where imei = ?",
+				new Object[] { hongWaiId, now,imei }, new int[] { Types.VARCHAR,Types.TIMESTAMP,
+						Types.VARCHAR });
+		return i == 1;
+	}
+
+	@Override
+	public List<BindDevice> getBindInfoById(Long user_id, Integer i) {
+		String sql = "select * from bind_device where user_id=? and  type =?";
+		List<BindDevice> list = jdbcTemplate.query(sql,
+				new Object[] { user_id ,i},
+				new BeanPropertyRowMapper<BindDevice>(BindDevice.class));
+		if (list != null && !list.isEmpty()) {
+			return list;
+		} else {
+			logger.info("cannot find userinfo:");
+		}
+		return null;
+	}
+
+	@Override
+	public boolean udpatDeviceSelect(Long user_id, String imei, Integer select) {
+		int i = jdbcTemplate.update(
+				"update bind_device set type=? where user_id = ? and imei = ?",
+				new Object[] { select, user_id, imei }, new int[] {
+						Types.INTEGER, Types.INTEGER, Types.VARCHAR });
+		return i == 1;
+	}
+
+	@Override
+	public boolean udpatbluetoothStatus(Long user_id, String imei, Integer open) {
+		int i = jdbcTemplate.update(
+				"update bind_device set bluetooth_status=? where user_id = ? and imei = ?",
+				new Object[] { open, user_id, imei }, new int[] {
+						Types.INTEGER, Types.INTEGER, Types.VARCHAR });
+		return i == 1;
+	}
+
+	@Override
+	public VersionInfo getVersionInfo() {
+		String sql = "select * from version_info where  1=1 order by id desc LIMIT 1";
+		List<VersionInfo> list = jdbcTemplate.query(sql, new Object[] {
+				
+		}, new BeanPropertyRowMapper<VersionInfo>(
+						VersionInfo.class));
+		if (list != null && !list.isEmpty()) {
+			return list.get(0);
+		} else {
+			logger.info("cannot find userinfo,imei:");
+		}
+		return null;
+	}
+
+	@Override
+	public boolean insertAllKey(String imei, String data) {
+		Timestamp now = Utils.getCurrentTimestamp();
+		int i = jdbcTemplate
+				.update("insert into allkey_info (imei, all_key, createtime) values (?,?,?)",
+						new Object[] { imei, data, now }, new int[] {
+								Types.VARCHAR, Types.VARCHAR, Types.TIMESTAMP });
+		return i == 1;
+	}
+
+	@Override
+	public AllKeyInfo getAllKeyInfo(String imei) {
+		String sql = "select * from allkey_info where imei=? LIMIT 1";
+		List<AllKeyInfo> list = jdbcTemplate.query(sql, new Object[] { imei },
+				new BeanPropertyRowMapper<AllKeyInfo>(AllKeyInfo.class));
+		if (list != null && !list.isEmpty()) {
+			return list.get(0);
+		} else {
+			logger.info("cannot find allkeyinfo,imei:" + imei);
+		}
+		return null;
+	}
+
+	@Override
+	public BindDevice getChooseDevice(Long user_id, Integer i) {
+		String sql = "select * from bind_device where user_id=? and  type =?";
+		List<BindDevice> list = jdbcTemplate.query(sql,
+				new Object[] { user_id ,i},
+				new BeanPropertyRowMapper<BindDevice>(BindDevice.class));
+		
+		if (list != null && !list.isEmpty()) {
+			return list.get(0);
+		} else {
+			logger.info("cannot find userinfo,imei:" + user_id);
+		}
+		return null;
 	}
 }

@@ -2,10 +2,12 @@ package com.bracelet.service;
 
 import java.util.List;
 
+import com.bracelet.entity.AllKeyInfo;
 import com.bracelet.entity.BindDevice;
 import com.bracelet.entity.HongWai;
 import com.bracelet.entity.NotRegisterInfo;
 import com.bracelet.entity.UserInfo;
+import com.bracelet.entity.VersionInfo;
 
 public interface IUserInfoService {
 
@@ -58,10 +60,26 @@ public interface IUserInfoService {
 
 	HongWai getHongWaiInfo(String imei);
 
-	boolean insertInfraredDeviceId(String imei, Long hongWaiId);
+	boolean insertInfraredDeviceId(String imei, String hongWaiId);
 
-	boolean updateHongWaiInfo(String imei, Long id, String name);
+	boolean updateHongWaiInfo(String imei, String id, String name);
 
 	boolean updateHongWaiNumInfo(String imei, Integer num);
+
+	boolean updateHongWaiId(String imei, String hongWaiId);
+
+	List<BindDevice> getBindInfoById(Long user_id, Integer i);
+
+	boolean udpatDeviceSelect(Long user_id, String imei, Integer select);
+
+	boolean udpatbluetoothStatus(Long user_id, String imei, Integer open);
+
+	VersionInfo getVersionInfo();
+
+	boolean insertAllKey(String imei, String data);
+
+	AllKeyInfo getAllKeyInfo(String imei);
+
+	BindDevice getChooseDevice(Long user_id, Integer i);
 
 }
