@@ -45,6 +45,8 @@ public class SocketBusinessFactory {
     private IService sendLableNum;
     @Resource
     private IService sendAllKey;
+    @Resource
+    private IService getJiHuoMa;
     
     public IService getService(int type) throws BizException {
         logger.info("*****type:" + type);
@@ -61,6 +63,9 @@ public class SocketBusinessFactory {
         case 11:
             // 下载码库成功，发送所有按键
             return sendAllKey;
+        case 12:
+            // 获取激活码
+            return getJiHuoMa;
         case 30:
             // 开灯
             return openLightService;

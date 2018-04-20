@@ -21,8 +21,9 @@ import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 
 import net.sf.json.JSONObject;
-
 import org.apache.commons.codec.binary.StringUtils;
+
+import com.alibaba.fastjson.JSON;
 
 
 
@@ -130,10 +131,14 @@ public class HttpsUtil {
 					+ md5.substring(31, 32);
 			String client = time + "_" + zuhe;
 		
-			String newMessage="c=ac&m=none&appid=15196333608014&f=7C3C22C6D6F5D09082667251";
+			String newMessage="c=t&m=none&appid=15196333608014&f=7C3C22C6D6F5D09082667251";
 			String result = Utils.httpsRequest(requestUrl, requestMethod,
 					newMessage, client);
 			System.out.println("得到的结果 ult:" + result);
+			JSONObject object = JSONObject.fromObject(result);
+			System.out.println(object.getInt("sm"));
+			System.out.println(object.getString("rs"));
+			//得到的结果 ult:{"ret_code":1,"ret_msg":"EHhOE7NYB+oLVoTp5w4dMlMfZ7a9e3pM1jpql6yfx6c="}
 		  
 	    } 
 	

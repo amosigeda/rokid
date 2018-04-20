@@ -11,6 +11,7 @@ public class HongWai {
 	private Timestamp updatetime;
 	private String name;
 	private Integer num;
+	private String rs;
 	
 
 	public Integer getIdd() {
@@ -77,4 +78,14 @@ public class HongWai {
 	public void setUpdatetime(Timestamp updatetime) {
 		this.updatetime = updatetime;
 	}
+
+	public String getRs() {
+		return rs;
+	}
+
+	public void setRs(String rs) {
+		this.rs = rs;
+	}
+
+	
 }

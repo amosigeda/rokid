@@ -43,7 +43,6 @@ public class Utils {
 	// public final static String APPKEY = "23632518";
 	// public final static String SECRET = "41ad5356a0f7909afe2620b98bd151a7";
 	public final static String SMSFREESIGNNAME = "沃特沃德";// 短信签名
-
 	/*
 	 * 发送短信
 	 */
@@ -53,8 +52,13 @@ public class Utils {
 	public static final String SMS_TYPE = "normal";
 	public static final String useFingerprintOpenDoor_SMSTEMPLATE_CODE = "SMS_91985064";// 使用指纹打开短信模板
 	public static final String pickALockSendMsg_SMSTEMPLATE_CODE = "SMS_91990103";// 使用指纹打开短信模板
-
 	public final static String USER_SAVE = "/upload/user/";
+	/*
+	 * 红外
+	 * */
+	public static final String HONGWAI_URL = "https://api.yaokongyun.cn/chip/m.php";
+	public static final String REQUEST_POST = "post";
+	public static final String HONGWAI_APPID = "15196333608014";
 
 	public static String randomString(int len) {
 		if (len <= 0) {

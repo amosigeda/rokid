@@ -9,19 +9,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.bracelet.dto.FingerDto;
 import com.bracelet.dto.SocketBaseDto;
 import com.bracelet.dto.SocketLoginDto;
-import com.bracelet.entity.BindDevice;
-import com.bracelet.service.IHeartRateService;
 import com.bracelet.service.IPushlogService;
-import com.bracelet.service.IStepService;
 import com.bracelet.service.ITokenInfoService;
 import com.bracelet.service.IUserInfoService;
-import com.bracelet.socket.business.IService;
-import com.bracelet.util.PushUtil;
 
 /**
  * 发送红外总数
@@ -47,7 +40,7 @@ public class SendLableNum extends AbstractBizService {
 		  Integer num = jsonObject.getInteger("num");
 	
 		  
-		 userInfoService.updateHongWaiNumInfo(imei, num);
+		 userInfoService.updateHongWaiNumInfo(imei, num, "");
 		// BindDevice bind=userInfoService.getBindInfoByImeiAndStatus(imei, 1);
 		 
 	/*	FingerDto sosDto = new FingerDto();

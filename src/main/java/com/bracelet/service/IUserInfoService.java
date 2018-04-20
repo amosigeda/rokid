@@ -64,7 +64,7 @@ public interface IUserInfoService {
 
 	boolean updateHongWaiInfo(String imei, String id, String name);
 
-	boolean updateHongWaiNumInfo(String imei, Integer num);
+	boolean updateHongWaiNumInfo(String imei, Integer num, String rs);
 
 	boolean updateHongWaiId(String imei, String hongWaiId);
 

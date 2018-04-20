@@ -340,11 +340,11 @@ public class UserInfoServiceImpl implements IUserInfoService {
 	}
 
 	@Override
-	public boolean updateHongWaiNumInfo(String imei, Integer num) {
+	public boolean updateHongWaiNumInfo(String imei, Integer num, String rs) {
 		Timestamp now = Utils.getCurrentTimestamp();
 		int i = jdbcTemplate.update(
-				"update hongwai set num =?,updatetime=? where imei = ?",
-				new Object[] { num, now,imei }, new int[] { Types.INTEGER,Types.TIMESTAMP,
+				"update hongwai set num =? ,updatetime=? , rs=? where imei = ?",
+				new Object[] { num, now, rs ,imei }, new int[] { Types.INTEGER,Types.TIMESTAMP,Types.VARCHAR,
 						Types.VARCHAR });
 		return i == 1;
 	}
