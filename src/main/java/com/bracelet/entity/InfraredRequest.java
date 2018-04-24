@@ -5,9 +5,9 @@ public class InfraredRequest {
 	private String no;
 	private int type;
 	private long timestamp;
-	private String kind;
-	private String brand;
-	private String model;
+	private Integer size;
+	private byte[] b;
+	private String result;
 
 	public int getType() {
 		return type;
@@ -41,28 +41,29 @@ public class InfraredRequest {
 		this.timestamp = timestamp;
 	}
 
-	public String getKind() {
-		return kind;
+
+	public byte[] getB() {
+		return b;
 	}
 
-	public void setKind(String kind) {
-		this.kind = kind;
+	public void setB(byte[] b) {
+		this.b = b;
 	}
 
-	public String getBrand() {
-		return brand;
+	public String getResult() {
+		return result;
 	}
 
-	public void setBrand(String brand) {
-		this.brand = brand;
+	public void setResult(String result) {
+		this.result = result;
 	}
 
-	public String getModel() {
-		return model;
+	public Integer getSize() {
+		return size;
 	}
 
-	public void setModel(String model) {
-		this.model = model;
+	public void setSize(Integer size) {
+		this.size = size;
 	}
 	
 }

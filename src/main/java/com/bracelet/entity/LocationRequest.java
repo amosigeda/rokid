@@ -7,6 +7,7 @@ public class LocationRequest {
 	private long timestamp;
 	private String name;
 	private String key;
+	private String src;
 
 	public int getType() {
 		return type;
@@ -54,6 +55,14 @@ public class LocationRequest {
 
 	public void setKey(String key) {
 		this.key = key;
+	}
+
+	public String getSrc() {
+		return src;
+	}
+
+	public void setSrc(String src) {
+		this.src = src;
 	}
 	
 }

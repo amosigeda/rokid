@@ -12,6 +12,7 @@ import java.util.zip.GZIPOutputStream;
 
 
 
+
 import net.sf.json.JSONObject;
 
 import org.apache.commons.codec.binary.StringUtils;  
@@ -119,13 +120,27 @@ public class GZIPUtils {
     }  
   
     public static void main(String[] args) {  
+    	String f="7C3C22C6D6F5D09082667251";
+    	String r="1";
+    	String time = System.currentTimeMillis() / 1000 + "";
+		String md5 = Utils.getmd5("none" + r + f + time);
+		String zuhe = md5.substring(1, 2) + md5.substring(3, 4)
+				+ md5.substring(7, 8) + md5.substring(15, 16)
+				+ md5.substring(31, 32);
+		String client = time + "_" + zuhe;
+		String newMessage = "c=d&m=none&r="+r+"&appid=" + Utils.HONGWAI_APPID
+				+ "&f=" + f;
+		String result = Utils.httpsRequest(Utils.HONGWAI_URL,
+				Utils.REQUEST_POST, newMessage, client);
+		System.out.println(result);
+		
         String str = "dliajfdlsa";  
-        System.out.println("原长度：" + str.length());  
-        System.out.println("压缩后字符串：" + GZIPUtils.compress(str).toString().length());  
+        System.out.println("原长度：" + result.length());  
+        System.out.println("压缩后字符串：" + GZIPUtils.compress(result).toString().length());  
         System.out.println("解压缩后字符串：" + StringUtils.newStringUtf8(GZIPUtils.uncompress(GZIPUtils.compress(str))));  
         System.out.println("解压缩后字符串：" + GZIPUtils.uncompressToString(GZIPUtils.compress(str)));  
     
-
+/*
 		String requestUrl = "https://api.yaokongyun.cn/chip/m.php";
 		String requestMethod = "POST";
 
@@ -157,7 +172,7 @@ public class GZIPUtils {
 		String newMessage="c=ac&m=none&appid=15196333608014&f=7C3C22C6D6F5D09082667251";
 		String result = Utils.httpsRequest(requestUrl, requestMethod,
 				newMessage, client);
-		System.out.println("result:" + result);
+		System.out.println("result:" + result);*/
 		
     }  
 

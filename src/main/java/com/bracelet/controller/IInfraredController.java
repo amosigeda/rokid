@@ -96,7 +96,7 @@ public class IInfraredController extends BaseController {
 	@ResponseBody
 	@RequestMapping(value = "/startMatch", method = RequestMethod.POST)
 	public HttpBaseDto startMatch(@RequestParam String token,
-			@RequestParam String imei, @RequestParam String id) {
+			@RequestParam String imei, @RequestParam String src) {
 		Long user_id = checkTokenAndUser(token);
 		SocketLoginDto socketLoginDto = ChannelMap.getChannel(imei);
 		if (socketLoginDto == null || socketLoginDto.getChannel() == null) {
@@ -108,6 +108,7 @@ public class IInfraredController extends BaseController {
 		re.setTimestamp(System.currentTimeMillis() / 1000);
 		re.setType(34);
 		re.setNo(RanomUtil.getFixLenthString(10));
+		re.setSrc(src);
 
 		if (socketLoginDto.getChannel().isActive()) {
 			socketLoginDto.getChannel().writeAndFlush(
@@ -128,7 +129,7 @@ public class IInfraredController extends BaseController {
 	@ResponseBody
 	@RequestMapping(value = "/nextMatch", method = RequestMethod.POST)
 	public HttpBaseDto nextMatch(@RequestParam String token,
-			@RequestParam String imei, @RequestParam String id) {
+			@RequestParam String imei, @RequestParam String src) {
 		Long user_id = checkTokenAndUser(token);
 		SocketLoginDto socketLoginDto = ChannelMap.getChannel(imei);
 		if (socketLoginDto == null || socketLoginDto.getChannel() == null) {
@@ -140,6 +141,7 @@ public class IInfraredController extends BaseController {
 		re.setTimestamp(System.currentTimeMillis() / 1000);
 		re.setType(35);
 		re.setNo(RanomUtil.getFixLenthString(10));
+		re.setSrc(src);
 
 		if (socketLoginDto.getChannel().isActive()) {
 			socketLoginDto.getChannel().writeAndFlush(
